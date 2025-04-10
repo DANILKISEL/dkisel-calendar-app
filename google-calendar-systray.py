@@ -21,12 +21,12 @@ def check_events():
         current_time = datetime.datetime.now()
 
         for event in events:
-            event_start = datetime.datetime.fromisoformat(event['start_time']).replace(tzinfo=None)
+            event_start = datetime.datetime.fromisoformat(event['start']).replace(tzinfo=None)
             if 0 <= (event_start - current_time).total_seconds() <= 60:
                 webbrowser.open(event['meet_link'])
                 print(f"Opening meeting link: {event['meet_link']}")
 
-        time.sleep(60)  # Check every minute
+        time.sleep(30)  # Check every minute
 
 # Function to refresh events manually and run the external script
 def refresh_events():
@@ -41,8 +41,10 @@ def refresh_events():
 def setup(icon):
     icon.visible = True
 
-# Load the icon from ./appIco directory
-icon_image = load_icon('appIco.png')
+# Chair logo
+icon_image = load_icon('appIcon.jpg')
+# Google Calendar logo
+# icon_image = load_icon('appIco.png')
 
 # Create the system tray icon with a refresh option
 icon = Icon("Event Checker", icon_image, "Event Checker", menu=pystray.Menu(
