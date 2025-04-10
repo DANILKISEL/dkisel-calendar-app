@@ -21,7 +21,7 @@ def check_events():
         current_time = datetime.datetime.now()
 
         for event in events:
-            event_start = datetime.datetime.fromisoformat(event['start']).replace(tzinfo=None)
+            event_start = datetime.datetime.fromisoformat(event['start_time']).replace(tzinfo=None)
             if 0 <= (event_start - current_time).total_seconds() <= 60:
                 webbrowser.open(event['meet_link'])
                 print(f"Opening meeting link: {event['meet_link']}")
