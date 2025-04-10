@@ -1,6 +1,7 @@
 import os
 import datetime
 import pickle
+import json  # Import json module for saving data
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -11,7 +12,8 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 def main():
     """Shows basic usage of the Calendar API.
-    Prints the next 10 events on the user's calendar along with their Google Meet links.
+Prints the next 10 events on the user's calendar along with their Google Meet links,
+and saves them to events.json.
     """
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
@@ -34,7 +36,7 @@ def main():
     service = build('calendar', 'v3', credentials=creds)
 
     # Call the Calendar API
-    now = datetime.datetime.now().isoformat() + 'Z'  # 'Z' indicates UTC time
+    now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
     print('Getting upcoming events')
 
     events_result = service.events().list(
@@ -50,6 +52,8 @@ def main():
     if not events:
         print('No upcoming events found.')
 
+    event_list = []  # List to hold event data
+
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         summary = event.get('summary', 'No Title')
@@ -63,15 +67,19 @@ def main():
                     meet_link = entry.get('uri')
                     break
 
-        print(f"Event: {summary}")
-        print(f"Start: {start}")
+        event_data = {
+            "summary": summary,
+            "start": start,
+            "meet_link": meet_link if meet_link else "No Google Meet link available."
+        }
 
-        if meet_link:
-            print(f"Google Meet Link: {meet_link}")
-        else:
-            print("No Google Meet link available.")
+        event_list.append(event_data)  # Add event data to list
 
-        print()  # Print a newline for better readability
+    # Save events to JSON file
+    with open('events.json', 'w') as json_file:
+        json.dump(event_list, json_file, indent=4)  # Write list to JSON file
+
+    print(f"Saved {len(event_list)} upcoming events to events.json")
 
 if __name__ == '__main__':
     main()
