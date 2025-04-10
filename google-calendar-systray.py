@@ -3,19 +3,13 @@ import datetime
 import webbrowser
 import threading
 import time
-from PIL import Image, ImageDraw
+from PIL import Image
 import pystray
 from pystray import MenuItem, Icon
 
-# Function to create a simple icon for the system tray
-def create_image(width, height):
-    # Generate an image and draw a pattern
-    image = Image.new('RGB', (width, height), color=(255, 255, 255))
-    dc = ImageDraw.Draw(image)
-    dc.rectangle(
-        (width // 2 - 10, height // 2 - 10, width // 2 + 10, height // 2 + 10),
-        fill=(0, 0, 0))
-    return image
+# Function to load an icon from a specified path
+def load_icon(icon_path):
+    return Image.open(icon_path)
 
 # Function to check events and open links if necessary
 def check_events():
@@ -26,19 +20,28 @@ def check_events():
         current_time = datetime.datetime.now()
 
         for event in events:
-            event_start = datetime.datetime.fromisoformat(event['start']).replace(tzinfo=None)
+            event_start = datetime.datetime.fromisoformat(event['start'])
             if 0 <= (event_start - current_time).total_seconds() <= 60:
                 webbrowser.open(event['meet_link'])
                 print(f"Opening meeting link: {event['meet_link']}")
 
         time.sleep(60)  # Check every minute
 
+# Function to refresh events manually
+def refresh_events(icon):
+    print("Refreshing events...")
+    check_events()  # Call check_events directly for immediate refresh
+
 # Function to run the system tray icon
 def setup(icon):
     icon.visible = True
 
-# Create the system tray icon
-icon = Icon("Event Checker", create_image(64, 64), "Event Checker", menu=pystray.Menu(
+# Load the icon from ./appIco directory
+icon_image = load_icon('./appIco.png')  # Change 'icon.png' to your actual icon file name
+
+# Create the system tray icon with a refresh option
+icon = Icon("Event Checker", icon_image, "Event Checker", menu=pystray.Menu(
+                MenuItem("Refresh", refresh_events),
                 MenuItem("Quit", lambda _: icon.stop())
             ))
 
