@@ -3,6 +3,7 @@ import datetime
 import webbrowser
 import threading
 import time
+import subprocess
 from PIL import Image
 import pystray
 from pystray import MenuItem, Icon
@@ -27,22 +28,26 @@ def check_events():
 
         time.sleep(60)  # Check every minute
 
-# Function to refresh events manually
-def refresh_events(icon):
+# Function to refresh events manually and run the external script
+def refresh_events():
     print("Refreshing events...")
-    check_events()  # Call check_events directly for immediate refresh
+    # Run the google-calendar-requests.py script
+    try:
+        subprocess.run(['python', './google-calendar-requests.py'], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running script: {e}")
 
 # Function to run the system tray icon
 def setup(icon):
     icon.visible = True
 
 # Load the icon from ./appIco directory
-icon_image = load_icon('./appIco.png')  # Change 'icon.png' to your actual icon file name
+icon_image = load_icon('appIco.png')
 
 # Create the system tray icon with a refresh option
 icon = Icon("Event Checker", icon_image, "Event Checker", menu=pystray.Menu(
-                MenuItem("Refresh", refresh_events),
-                MenuItem("Quit", lambda _: icon.stop())
+    MenuItem("Refresh", refresh_events),
+    MenuItem("Quit", lambda _: icon.stop())
             ))
 
 # Start the event checking in a separate thread
