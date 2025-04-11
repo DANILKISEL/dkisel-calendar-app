@@ -3,19 +3,14 @@ import datetime
 import webbrowser
 import threading
 import time
-from PIL import Image, ImageDraw
+import subprocess
+from PIL import Image
 import pystray
 from pystray import MenuItem, Icon
 
-# Function to create a simple icon for the system tray
-def create_image(width, height):
-    # Generate an image and draw a pattern
-    image = Image.new('RGB', (width, height), color=(255, 255, 255))
-    dc = ImageDraw.Draw(image)
-    dc.rectangle(
-        (width // 2 - 10, height // 2 - 10, width // 2 + 10, height // 2 + 10),
-        fill=(0, 0, 0))
-    return image
+# Function to load an icon from a specified path
+def load_icon(icon_path):
+    return Image.open(icon_path)
 
 # Function to check events and open links if necessary
 def check_events():
@@ -31,15 +26,30 @@ def check_events():
                 webbrowser.open(event['meet_link'])
                 print(f"Opening meeting link: {event['meet_link']}")
 
-        time.sleep(60)  # Check every minute
+        time.sleep(30)  # Check every minute
+
+# Function to refresh events manually and run the external script
+def refresh_events():
+    print("Refreshing events...")
+    # Run the google-calendar-requests.py script
+    try:
+        subprocess.run(['python', './google-calendar-requests.py'], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running script: {e}")
 
 # Function to run the system tray icon
 def setup(icon):
     icon.visible = True
 
-# Create the system tray icon
-icon = Icon("Event Checker", create_image(64, 64), "Event Checker", menu=pystray.Menu(
-                MenuItem("Quit", lambda _: icon.stop())
+# Chair logo
+icon_image = load_icon('appIcon.jpg')
+# Google Calendar logo
+# icon_image = load_icon('appIco.png')
+
+# Create the system tray icon with a refresh option
+icon = Icon("Event Checker", icon_image, "Event Checker", menu=pystray.Menu(
+    MenuItem("Refresh", refresh_events),
+    MenuItem("Quit", lambda _: icon.stop())
             ))
 
 # Start the event checking in a separate thread
