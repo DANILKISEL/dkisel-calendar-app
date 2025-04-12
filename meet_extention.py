@@ -79,5 +79,4 @@ def create_meeting(start_time="12.12.2025, 12:34", meet_duration=60, attendees="
     except Exception as e:
         print(f"An error occurred: {e}")
 
-# Example usage (uncomment to use):
-create_meeting()
+

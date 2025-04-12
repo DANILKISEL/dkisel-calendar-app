@@ -4,59 +4,18 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import datetime
 import uuid  # Import the uuid module
+import os
+import meet_extention as gle_meet
 
 # Function to create a meeting
-def create_meeting(start_time, meet_duration, attendees, title, description):
-    SERVICE_ACCOUNT_FILE = './credentials.json'  # Path to your credentials file
-    SCOPES = ['https://www.googleapis.com/auth/calendar']
-
-    credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
-    service = build('calendar', 'v3', credentials=credentials)
-
-    # Parse start_time from DD.MM.YYYY, HH:MM format
-    try:
-        start_datetime = datetime.datetime.strptime(start_time, "%d.%m.%Y, %H:%M")
-    except ValueError:
-        print("Invalid date format. Please use DD.MM.YYYY, HH:MM.")
-        return
-
-    end_datetime = start_datetime + datetime.timedelta(minutes=meet_duration)
-
-    event = {
-        'summary': title,
-        'location': 'Online',
-        'description': description,
-        'start': {
-            'dateTime': start_datetime.isoformat(),
-            'timeZone': start_datetime.tzinfo.zone if start_datetime.tzinfo else 'UTC',
-        },
-        'end': {
-            'dateTime': end_datetime.isoformat(),
-            'timeZone': end_datetime.tzinfo.zone if end_datetime.tzinfo else 'UTC',
-        },
-        'conferenceData': {
-            'createRequest': {
-                'requestId': str(uuid.uuid4()),  # Generate a unique requestId
-                'conferenceSolutionKey': {
-                    'type': "hangoutsMeet"
-                }
-            }
-        },
-        'attendees': [{'email': email.strip()} for email in attendees],
-    }
-
-    event = service.events().insert(calendarId='primary', body=event,
-                                    conferenceDataVersion=1).execute()
-
-    print(f"Meeting created: {event.get('htmlLink')}")
+def create_meeting(start_time, meet_duration, attendees, title, description = "NONE"):
+    gle_meet.create_meeting(start_time, mmeet_duration, attendees, title, description)
 
 # Initialize Pygame
 pygame.init()
 
 # Set up display
-screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
+screen = pygame.display.set_mode((1260, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Google Meet Scheduler")
 
 # Set up fonts
