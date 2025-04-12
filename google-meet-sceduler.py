@@ -56,11 +56,11 @@ def create_meeting(start_time, meet_duration, attendees, title, description):
 pygame.init()
 
 # Set up display
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 pygame.display.set_caption("Google Meet Scheduler")
 
 # Set up fonts
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font("Arial_Black.ttf", 36)
 
 # Input fields
 start_time_input = ""
@@ -73,7 +73,10 @@ current_input_index = 0
 input_fields = ["start_time", "duration", "attendees", "title", "description"]
 
 def handle_keydown(event):
-    global start_time_input, duration_input, attendees_input, title_input, description_input, current_input_index
+    global start_time_input,duration_input, attendees_input, title_input, description_input, current_input_index
+    if event.key == pygame.K_e:
+        screen.fill((255, 255, 255))  # White background
+
 
     if current_input_index == 0:  # Start Time Input
         if event.key == pygame.K_RETURN:
@@ -147,7 +150,8 @@ def handle_navigation(event):
 # Main loop
 running = True
 while running:
-    screen.fill((255, 255, 255))  # White background
+    # Fill the screen with white
+    screen.fill((255, 255, 255))
 
     # Event handling
     for event in pygame.event.get():
@@ -161,27 +165,23 @@ while running:
     # Render text inputs based on current input field focus
     colors = [(0, 0, 255) if i == current_input_index else (0, 0, 0) for i in range(len(input_fields))]
 
-    start_time_text = font.render(f"Start Time (DD.MM.YYYY, HH:MM): {start_time_input}", True,
-                                  colors[0])
-    duration_text = font.render(f"Duration (min): {duration_input}", True,
-                                colors[1])
-    attendees_text = font.render(f"Attendees (comma-separated): {attendees_input}", True,
-                                 colors[2])
-    title_text = font.render(f"Meeting Title: {title_input}", True,
-                             colors[3])
-    description_text = font.render(f"Meeting Description: {description_input}", True,
-                                   colors[4])
+    start_time_text = font.render(f"Start Time (DD.MM.YYYY, HH:MM): {start_time_input}", True, colors[0])
+    duration_text = font.render(f"Duration (min): {duration_input}", True, colors[1])
+    attendees_text = font.render(f"Attendees (comma-separated): {attendees_input}", True, colors[2])
+    title_text = font.render(f"Meeting Title: {title_input}", True, colors[3])
+    description_text = font.render(f"Meeting Description: {description_input}", True, colors[4])
 
+    # Blit text onto the screen
     screen.blit(start_time_text, (20, 20))
     screen.blit(duration_text, (20, 80))
     screen.blit(attendees_text, (20,140))
     screen.blit(title_text,(20 ,200))
     screen.blit(description_text,(20 ,260))
-# Update display
 
-pygame.display.flip()
+    # Update display
+    pygame.display.flip()
 
 # Quit Pygame
-
 pygame.quit()
 sys.exit()
+

@@ -27,6 +27,14 @@ def check_events():
                 print(f"Opening meeting link: {event['meet_link']}")
 
         time.sleep(30)  # Check every minute
+def refresher():
+    while True:
+        try:
+            subprocess.run(['python', './google-calendar-requests.py'], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error running script: {e}")
+        time.sleep(600)
+
 
 # Function to refresh events manually and run the external script
 def refresh_events():
@@ -54,6 +62,7 @@ icon = Icon("Event Checker", icon_image, "Event Checker", menu=pystray.Menu(
 
 # Start the event checking in a separate thread
 threading.Thread(target=check_events, daemon=True).start()
+threading.Thread(target=refresher, daemon=True).start()
 
 # Run the system tray application
 icon.run(setup)
