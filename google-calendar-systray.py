@@ -42,9 +42,9 @@ def setup(icon):
     icon.visible = True
 
 # Chair logo
-icon_image = load_icon('appIcon.jpg')
+#icon_image = load_icon('appIcon.jpg')
 # Google Calendar logo
-# icon_image = load_icon('appIco.png')
+icon_image = load_icon('appIco.png')
 
 # Create the system tray icon with a refresh option
 icon = Icon("Event Checker", icon_image, "Event Checker", menu=pystray.Menu(
