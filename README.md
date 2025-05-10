@@ -32,7 +32,7 @@ Before running these scripts, ensure you have:
 
 ## Setup Instructions
 
-# Watch Video: [VID](https://drive.google.com/file/d/1tV5nmlUlwmZ11PdF0AA4Q1bmAZJebjYk/view?usp=drivesdk)
+### Watch Video: [VID](https://drive.google.com/file/d/1tV5nmlUlwmZ11PdF0AA4Q1bmAZJebjYk/view?usp=drivesdk)
 
 ### Set Up Google Calendar API:
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
